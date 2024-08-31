@@ -1,6 +1,6 @@
 package io.geekya215.mspring;
 
-public class BeansException extends Throwable {
+public class BeansException extends RuntimeException {
 
     public BeansException(String message) {
         super(message);
