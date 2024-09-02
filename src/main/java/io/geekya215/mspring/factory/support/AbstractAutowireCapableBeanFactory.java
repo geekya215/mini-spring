@@ -1,7 +1,11 @@
 package io.geekya215.mspring.factory.support;
 
 import io.geekya215.mspring.BeansException;
+import io.geekya215.mspring.PropertyValue;
+import io.geekya215.mspring.PropertyValues;
 import io.geekya215.mspring.factory.config.BeanDefinition;
+import io.geekya215.mspring.factory.config.BeanReference;
+import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.Constructor;
 
@@ -13,6 +17,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean = null;
         try {
             bean = createBeanInstance(beanDefinition, beanName, args);
+            applyPropertyValues(beanName, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
@@ -20,6 +25,24 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         registerSingleton(beanName, bean);
 
         return bean;
+    }
+
+    private void applyPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        try {
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
+
+                String name = propertyValue.getName();
+                Object value = propertyValue.getValue();
+
+                if (value instanceof BeanReference beanReference) {
+                    value = getBean(beanReference.getBeanName());
+                }
+                BeanUtils.setProperty(bean, name, value);
+            }
+        } catch (Exception e) {
+            throw new BeansException("Error setting property values：" + beanName);
+        }
     }
 
     protected Object createBeanInstance(BeanDefinition beanDefinition, String beanName, Object[] args) throws BeansException {

@@ -1,21 +1,27 @@
 package io.geekya215.mspring;
 
 public class UserService {
-    private String name;
+    private int id;
 
-    public UserService(String name) {
-        this.name = name;
-    }
+    private UserDao userDao;
 
     public void queryUserInfo() {
-        System.out.println("Query user [" + name + "] information");
+        System.out.println("Query user [" + userDao.queryUserName(id) + "] information");
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }
